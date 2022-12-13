@@ -1,0 +1,22 @@
+.PHONY: all release clean
+
+RELEASE_FLAGS = -O2 -Wall -DNDEBUG
+DEBUG_FLAGS   = -g -O0 -Wall
+RELEASE_EXEC1  = MD5
+SOURCE1        = MD5.cpp
+RELEASE_EXEC2  = CBC
+SOURCE2        = CBC.cpp
+
+all: release
+ 
+
+release: $(RELEASE_EXEC1) $(RELEASE_EXEC2)
+
+$(RELEASE_EXEC1): $(SOURCE1)
+	g++ $(RELEASE_FLAGS) $(SOURCE1) -o $(RELEASE_EXEC1)
+	
+$(RELEASE_EXEC2): $(SOURCE2)
+	g++ $(RELEASE_FLAGS) $(SOURCE2) -o $(RELEASE_EXEC2)
+
+clean:
+	rm -f $(RELEASE_EXEC1) $(RELEASE_EXEC2)
