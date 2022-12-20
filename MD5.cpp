@@ -12,25 +12,10 @@
 int main(int argc, char **argv)
 {
     using namespace CryptoPP;
-
+	const char * file = "strings.txt";
+	std::string strHash;
     Weak::MD5 hash;
-    std::string msg;
-    byte *buffer = new byte [hash.DigestSize()];
-    std::ifstream file("/home/stud/C++Projects/prakt4/prakt4/strings.txt");
-    if(!file) {
-        std::cerr<< "fileproblems";
-        abort();
-    }
-
-    while(getline(file, msg)) {
-        std::cout<<"string:"<<msg<<'\n';
-        hash.Update((const byte*)msg.data(), msg.size());
-    }
-
-    file.close();
-    hash.Final(buffer);
-    StringSource(buffer, hash.DigestSize(), true, new HexEncoder(new FileSink(std::cout)));
-    std::cout<<std::endl;
-    delete buffer;
+    FileSource(file, true, new HashFilter(hash, new HexEncoder(new StringSink (strHash))));
+    std::cout<<strHash<<std::endl;
     return 0;
 }
