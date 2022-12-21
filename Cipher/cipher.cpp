@@ -13,10 +13,8 @@
 #include "cipher.h"
 
 
-cipher::cipher(std::string o_file, std::string c_file, std::string key){
+cipher::cipher(std::string o_file, std::string key){
 orig_file = o_file.c_str();
-encr_file = c_file.c_str();;
-decr_file = c_file.c_str();;
 pwd = key;
 }
 
@@ -35,8 +33,8 @@ void cipher::encrypt()
     	
         CryptoPP::StringSource (key, sizeof(key), true,
                                 new CryptoPP::HexEncoder(
-                                    new CryptoPP::FileSink(key_file)));
-        std::clog << "Key generated and stored to file " << key_file << std::endl;
+                                    new CryptoPP::FileSink(enc_key_file)));
+        std::cout << "Key generated and stored to file " << enc_key_file << std::endl;
         // generate random IV (not secret)
         CryptoPP::byte iv[CryptoPP::DES::BLOCKSIZE];
         prng.GenerateBlock(iv, sizeof(iv));
@@ -44,7 +42,7 @@ void cipher::encrypt()
         CryptoPP::StringSource(iv, sizeof(iv), true,
                                new CryptoPP::HexEncoder(
                                    new CryptoPP::FileSink(iv_file)));
-        std::clog << "IV generated and stored to file " << iv_file << std::endl;
+        std::cout << "IV generated and stored to file " << iv_file << std::endl;
 
         // encryption
 
@@ -56,7 +54,7 @@ void cipher::encrypt()
         CryptoPP::FileSource (orig_file, true,
                               new CryptoPP::StreamTransformationFilter(encr,
                                       new CryptoPP::FileSink(encr_file)));
-        std::clog << "File " << orig_file << " encrypted and stored to " << encr_file << std::endl;
+        std::cout << "File " << orig_file << " encrypted and stored to " << encr_file << std::endl;
 
     } catch( const CryptoPP::Exception& e ) {    // catch exception
         std::cerr << e.what() << std::endl;
@@ -76,8 +74,8 @@ void cipher::decrypt()
     	
     	CryptoPP::StringSource (key, sizeof(key), true,
                                 new CryptoPP::HexEncoder(
-                                    new CryptoPP::FileSink(key_file)));
-        std::clog << "Key generated and stored to file " << key_file << std::endl;
+                                    new CryptoPP::FileSink(dec_key_file)));
+        std::cout << "Key generated and stored to file " << dec_key_file << std::endl;
     
 
         // read IV from file iv_file
@@ -85,7 +83,7 @@ void cipher::decrypt()
         CryptoPP::FileSource(iv_file, true,
                              new CryptoPP::HexDecoder(
                                  new CryptoPP::ArraySink(iv, sizeof iv)));
-        std::clog << "IV readed from file " << iv_file << std::endl;
+        std::cout << "IV readed from file " << iv_file << std::endl;
 
         // decryption
 
@@ -94,10 +92,11 @@ void cipher::decrypt()
         // set IV and Key to cipher
         decr.SetKeyWithIV(key, sizeof(key), iv);
         // read from orig_file -> encrypt -> save to encr_file
+        std::cout << "decr_file " << decr_file << std::endl;
         CryptoPP::FileSource (orig_file, true,
                               new CryptoPP::StreamTransformationFilter(decr,
                                       new CryptoPP::FileSink(decr_file)));
-        std::clog << "File " << orig_file << " decrypted and stored to " << decr_file << std::endl;
+        std::cout << "File " << orig_file << " decrypted and stored to " << decr_file << std::endl;
 
     } catch( const CryptoPP::Exception& e ) {
         std::cerr << e.what() << std::endl;

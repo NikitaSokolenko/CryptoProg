@@ -24,9 +24,9 @@ Opts::Opts(int argc, char **argv)
             mode = string(optarg);
             if (mode == "e"){
             	encrypt = true;}
-            if (mode == "d"){
+            else if (mode == "d"){
             	decrypt = true;
-            }
+            } else usage(argv[0]);
             break;
         case 'f': // file
             crypto_file = string(optarg);
@@ -40,8 +40,6 @@ Opts::Opts(int argc, char **argv)
     
     if (orig_file == "")
     	{usage(argv[0]);}
-	if (crypto_file == "")
-		{usage(argv[0]);}
 	if (key == "")
 		{usage(argv[0]);}
 	if ((!encrypt)&&(!decrypt))

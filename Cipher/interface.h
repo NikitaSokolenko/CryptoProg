@@ -9,9 +9,9 @@ class Opts
 private:
     void usage(const char* progName);
 public:
-	std::string orig_file;
-	std::string crypto_file;
-	std::string key;
+	std::string orig_file = "";
+	std::string crypto_file = "NotSet";
+	std::string key = "";
 	std::string mode;
 	bool encrypt = false;
 	bool decrypt = false;
