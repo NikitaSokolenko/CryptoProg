@@ -12,55 +12,54 @@ using namespace std;
 Opts::Opts(int argc, char **argv)
 {
     int opt;
-    while ((opt = getopt(argc, argv, "k:o:f:e:d")) != -1) {
+    while ((opt = getopt(argc, argv, "k:o:m:f:h")) != -1) {
         switch (opt) {
-        case 'k': // key
-            key = optarg;
+        case 'k':
+            key = string(optarg);
             break;
-        case 'e': // encrypt
-            encrypt = true;
+        case 'o':
+            orig_file = string(optarg);
             break;
-        case 'd': // decrypt
-            encrypt = true;
+        case 'm':
+            mode = string(optarg);
+            if (mode == "e"){
+            	encrypt = true;}
+            if (mode == "d"){
+            	decrypt = true;
+            }
             break;
         case 'f': // file
-            if(encrypt&&decrypt || !encrypt&&!decript){
-            usage(argv[0]);
-            break;}
-            else{
-            	if encrypt
-            		encr_file = optarg;
-            	if decrypt
-            		decr_file = optarg;
-            }
+            crypto_file = string(optarg);
+            break;  
         case 'h': // -h help
         case '?': // неверный параметр
         case ':': // нет значения у параметра
             usage(argv[0]); // сообщить и завершить
         }
     }
+    
+    if (orig_file == "")
+    	{usage(argv[0]);}
+	if (crypto_file == "")
+		{usage(argv[0]);}
+	if (key == "")
+		{usage(argv[0]);}
+	if ((!encrypt)&&(!decrypt))
+		{usage(argv[0]);}
+    
 }
 
 void Opts::usage(const char* progName)
 {
-    std::cout<<"Usage: "<<progName<<" -b DataBaseName -n LogFileName -p Port \n";
+    std::cout<<"Usage: "<<progName<<" -k Password -o Original_file -f Encrypted/Decrypted_file -m e|d \n";
     exit(1);
 }
 
 bool Opts::CheckFiles()
 {
     try {
-        std::ifstream file1(DataBaseName);
-        if (file1.bad()) {
-            throw std::invalid_argument("what");
-        }
-    } catch(std::invalid_argument err) {
-        cout<<err.what()<<std::endl;
-        exit(1);
-    }
-    try {
-        std::ifstream file2(LogFileName);
-        if (file2.bad()) {
+        std::ifstream o_file(orig_file);
+        if (o_file.bad()) {
             throw std::invalid_argument("what");
         }
     } catch(std::invalid_argument err) {

@@ -13,11 +13,17 @@
 #include <random>
 #include <sstream>
 #include <iomanip>
+#include "interface.h"
+#include "cipher.h"
 
 using namespace std;
 
 
 int main(int argc, char **argv)
 {
-   
+Opts op(argc, argv);
+op.CheckFiles();
+cipher cip(op.orig_file, op.crypto_file, op.key);
+if (op.encrypt)
+	cip.encrypt();
 }
